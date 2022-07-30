@@ -1,5 +1,5 @@
-import LayoutDashboard from '../components/dashboard';
-export default function Home({ articles }) {
+import LayoutDashboard from '../../components/dashboard';
+export default function Home() {
 	return <div></div>;
 }
 
