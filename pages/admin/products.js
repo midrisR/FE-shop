@@ -7,12 +7,13 @@ import TextAreaElement from '../../components/form/textarea';
 import { GlobalContext } from '../../context/GlobalState';
 import SelectElement from '../../components/form/select';
 import UploadVariant from '../../components/form/UploadVariant';
-import { Form, Button, Space } from 'antd';
+import MultipleSelect from '../../components/form/MultipleSelect';
+import { Form, Button, Space, Row, Col } from 'antd';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 
 export default function Products() {
 	const { setValue, value, error, handleSubmit } = useContext(GlobalContext);
-	const [fields, setFields] = useState([]);
+	const [fields, setFields] = useState([{ variant: '' }]);
 	const [variant, setVariant] = useState(false);
 	const [form] = Form.useForm();
 
@@ -25,12 +26,13 @@ export default function Products() {
 	};
 
 	const addFields = () => {
-		setFields([...fields, {}]);
+		setFields([...fields, { variant: '' }]);
 	};
 
 	const removeFields = (index) => {
 		let data = [...fields];
 		data.splice(index, 1);
+		setValue(data);
 		setFields(data);
 	};
 
@@ -39,7 +41,7 @@ export default function Products() {
 		data[index][event.target.name] = event.target.value;
 		setValue((prev) => ({
 			...prev,
-			options: data.map(({ price, variant }) => ({ variant, price })),
+			variant: data.map(({ price, variant }) => ({ variant, price })),
 		}));
 	};
 
@@ -47,13 +49,6 @@ export default function Products() {
 		setVariant(true);
 	};
 
-	const handleKey = (e) => {
-		const { value } = e.target;
-		setValue((prev) => ({
-			...prev,
-			key: value,
-		}));
-	};
 	return (
 		<Form
 			form={form}
@@ -99,41 +94,44 @@ export default function Products() {
 
 			{variant && (
 				<div>
-					<InputElement
-						placeholder="example: color"
-						name="key"
-						label="name"
-						hasFeedback
-						validateStatus={error['varian'] && 'error'}
-						help={error['varian']}
-						onChange={handleKey}
-					/>
 					{fields.map((field, i) => (
 						<Form.Item
 							key={i}
-							wrapperCol={{ offset: 2, span: 13 }}
+							label="variant"
+							wrapperCol={{ span: 32 }}
 							style={{ margin: 0 }}>
-							<Space direction="vertical" style={{ width: '100%' }}>
-								<Space wrap>
+							<Row gutter={16}>
+								<Col span={3}>
 									<InputElement
 										placeholder="example: red"
-										style={{ width: '100%' }}
 										name="variant"
 										onChange={(event) => handleChangeVarian(i, event)}
 									/>
+								</Col>
+								<Col span={3}>
 									<InputElement
 										placeholder="Price"
-										style={{ width: '100%' }}
 										name="price"
 										onChange={(event) => handleChangeVarian(i, event)}
 									/>
-									<Form.Item className="item">
-										<Button type="primary" onClick={() => removeFields(i)}>
-											<CloseOutlined />
-										</Button>
-									</Form.Item>
-								</Space>
-							</Space>
+								</Col>
+								<Col span={4}>
+									<MultipleSelect
+										index={i}
+										options={fields}
+										setValue={setValue}
+									/>
+								</Col>
+								<Col span={6}>
+									{i !== 0 && (
+										<Form.Item className="item">
+											<Button type="primary" onClick={() => removeFields(i)}>
+												<CloseOutlined />
+											</Button>
+										</Form.Item>
+									)}
+								</Col>
+							</Row>
 						</Form.Item>
 					))}
 					<ButtonElement

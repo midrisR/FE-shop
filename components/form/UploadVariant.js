@@ -62,12 +62,13 @@ const UploadVariant = ({ setValue, options }) => {
 				[index]: true,
 			}));
 		}
+		console.log(newFileList.status);
 		if (newFileList.status === 'done') {
 			let data = [...options];
-			data[index].options = newFileList.response;
+			data[index].images = newFileList.response;
 			setValue((prev) => ({
 				...prev,
-				options: data,
+				variant: data,
 			}));
 		}
 		setFileList(newFileList);
@@ -76,7 +77,6 @@ const UploadVariant = ({ setValue, options }) => {
 		action: 'http://localhost:5000/upload',
 		beforeUpload: beforeUpload,
 	};
-	console.log(options);
 	return (
 		<Row style={{ marginLeft: '8%' }}>
 			{options.map((option, i) => {
@@ -92,6 +92,7 @@ const UploadVariant = ({ setValue, options }) => {
 							name="image">
 							{!success[i] && uploadButton}
 						</Upload>
+						{option.variant}
 						<Modal
 							visible={previewVisible}
 							title={previewTitle}
