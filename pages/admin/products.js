@@ -8,14 +8,28 @@ import { GlobalContext } from '../../context/GlobalState';
 import SelectElement from '../../components/form/select';
 import UploadVariant from '../../components/form/UploadVariant';
 import MultipleSelect from '../../components/form/MultipleSelect';
-import { Form, Button, Space, Row, Col } from 'antd';
+import { Form, Button, Divider } from 'antd';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import DynamicFields from '../../components/form/DinamycField';
+
+const formItemLayoutWithOutLabel = {
+	wrapperCol: {
+		xs: {
+			span: 20,
+			offset: 1,
+		},
+		sm: {
+			span: 10,
+			offset: 2,
+		},
+	},
+};
 
 export default function Products() {
 	const { setValue, value, error, handleSubmit } = useContext(GlobalContext);
-	const [fields, setFields] = useState([{ variant: '' }]);
-	const [variant, setVariant] = useState(false);
 	const [form] = Form.useForm();
+
+	const [obj, setObj] = useState([]);
 
 	const handleOnchange = (e) => {
 		const { name, value } = e.target;
@@ -25,29 +39,15 @@ export default function Products() {
 		}));
 	};
 
-	const addFields = () => {
-		setFields([...fields, { variant: '' }]);
-	};
-
-	const removeFields = (index) => {
-		let data = [...fields];
-		data.splice(index, 1);
-		setValue(data);
-		setFields(data);
-	};
-
-	const handleChangeVarian = (index, event) => {
-		let data = [...fields];
-		data[index][event.target.name] = event.target.value;
-		setValue((prev) => ({
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setObj((prev) => ({
 			...prev,
-			variant: data.map(({ price, variant }) => ({ variant, price })),
+			[name]: value,
 		}));
 	};
 
-	const handleAddVariant = () => {
-		setVariant(true);
-	};
+	console.log(obj);
 
 	return (
 		<Form
@@ -80,69 +80,43 @@ export default function Products() {
 				name="description"
 				onChange={handleOnchange}
 			/>
-
-			<h1 style={{ padding: '2rem' }}>Sele Information</h1>
-			<Form.Item wrapperCol={{ offset: 2, span: 16 }}>
-				<Button
-					type="primary"
-					htmlType="button"
-					icon={<PlusOutlined />}
-					onClick={handleAddVariant}>
-					Add Variant
-				</Button>
-			</Form.Item>
-
-			{variant && (
-				<div>
-					{fields.map((field, i) => (
-						<Form.Item
-							key={i}
-							label="variant"
-							wrapperCol={{ span: 32 }}
-							style={{ margin: 0 }}>
-							<Row gutter={16}>
-								<Col span={3}>
-									<InputElement
-										placeholder="example: red"
-										name="variant"
-										onChange={(event) => handleChangeVarian(i, event)}
+			<Divider orientation="left" className="first">
+				Information Product
+			</Divider>
+			<Form.List name="op">
+				{(fields, { add, remove }, { errors }) => (
+					<React.Fragment>
+						{fields.map((field, index) => (
+							<React.Fragment key={index + 1}>
+								<Divider orientation="left" className="first">
+									variant {index + 1}
+								</Divider>
+								<Form.Item
+									wrapperCol={{ span: 4, offset: 2 }}
+									style={{ marginBottom: 0 }}>
+									<Button
+										onClick={() => remove(field.name)}
+										type="primary"
+										danger
+										size="small"
+										icon={<CloseOutlined />}
 									/>
-								</Col>
-								<Col span={3}>
-									<InputElement
-										placeholder="Price"
-										name="price"
-										onChange={(event) => handleChangeVarian(i, event)}
-									/>
-								</Col>
-								<Col span={4}>
-									<MultipleSelect
-										index={i}
-										options={fields}
-										setValue={setValue}
-									/>
-								</Col>
-								<Col span={6}>
-									{i !== 0 && (
-										<Form.Item className="item">
-											<Button type="primary" onClick={() => removeFields(i)}>
-												<CloseOutlined />
-											</Button>
-										</Form.Item>
-									)}
-								</Col>
-							</Row>
+								</Form.Item>
+								<DynamicFields
+									name="variant"
+									changeName={handleChange}
+									ChangeOptions={handleChange}
+								/>
+							</React.Fragment>
+						))}
+						<Form.Item {...formItemLayoutWithOutLabel}>
+							<Button onClick={() => add()} type="primary" icon={<PlusOutlined />}>
+								Add variant
+							</Button>
 						</Form.Item>
-					))}
-					<ButtonElement
-						type="primary"
-						onClick={addFields}
-						htmlType="button"
-						title="add options"
-					/>
-					<UploadVariant options={fields} setValue={setValue} />
-				</div>
-			)}
+					</React.Fragment>
+				)}
+			</Form.List>
 
 			<InputElement
 				name="price"
@@ -170,7 +144,10 @@ export default function Products() {
 				help={error['stock']}
 				onChange={handleOnchange}
 			/>
-			<h1 style={{ padding: '2rem' }}>Delivery Information</h1>
+
+			<Divider orientation="left" className="first">
+				Delivery Information
+			</Divider>
 			<InputElement
 				name="weight"
 				label="weight"

@@ -62,7 +62,6 @@ const UploadVariant = ({ setValue, options }) => {
 				[index]: true,
 			}));
 		}
-		console.log(newFileList.status);
 		if (newFileList.status === 'done') {
 			let data = [...options];
 			data[index].images = newFileList.response;

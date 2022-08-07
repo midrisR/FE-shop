@@ -19,25 +19,25 @@ export const GlobalProvider = ({ children }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		try {
-			const res = await axios({
-				method: 'POST',
-				url: 'http://localhost:5000/products/',
-				data: value,
-			});
-			dispatch({
-				type: 'PRODUCTS',
-				payload: res,
-			});
-		} catch (error) {
-			console.log(error);
-			const errRes = error.response.data.message;
-			dispatch({
-				type: 'ERROR',
-				payload: errRes,
-			});
-		}
+		console.log(value);
+		// try {
+		// 	const res = await axios({
+		// 		method: 'POST',
+		// 		url: 'http://localhost:5000/products/',
+		// 		data: value,
+		// 	});
+		// 	dispatch({
+		// 		type: 'PRODUCTS',
+		// 		payload: res,
+		// 	});
+		// } catch (error) {
+		// 	console.log(error);
+		// 	const errRes = error.response.data.message;
+		// 	dispatch({
+		// 		type: 'ERROR',
+		// 		payload: errRes,
+		// 	});
+		// }
 	};
 	return (
 		<GlobalContext.Provider
