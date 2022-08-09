@@ -28,7 +28,7 @@ const DynamicFields = ({ name, changeName, changeOptions }) => {
 	};
 
 	return (
-		<Form name="dynamic_form_item" {...formItemLayoutWithOutLabel}>
+		<>
 			<Form.Item {...formItemLayout} label="Name">
 				<Input
 					placeholder="example: color / size"
@@ -79,7 +79,7 @@ const DynamicFields = ({ name, changeName, changeOptions }) => {
 					</>
 				)}
 			</Form.List>
-		</Form>
+		</>
 	);
 };
 
