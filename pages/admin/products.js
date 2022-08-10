@@ -7,23 +7,8 @@ import TextAreaElement from '../../components/form/textarea';
 import { GlobalContext } from '../../context/GlobalState';
 import SelectElement from '../../components/form/select';
 import UploadVariant from '../../components/form/UploadVariant';
-import MultipleSelect from '../../components/form/MultipleSelect';
+import DynamicFields from '../../components/form/DynamicFields';
 import { Form, Button, Divider } from 'antd';
-import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
-import DynamicFields from '../../components/form/DinamycField';
-
-const formItemLayoutWithOutLabel = {
-	wrapperCol: {
-		xs: {
-			span: 20,
-			offset: 1,
-		},
-		sm: {
-			span: 10,
-			offset: 2,
-		},
-	},
-};
 
 export default function Products() {
 	const { setValue, value, error, handleSubmit } = useContext(GlobalContext);
@@ -38,16 +23,6 @@ export default function Products() {
 			[name]: value,
 		}));
 	};
-
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setObj((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	console.log(obj);
 
 	return (
 		<Form
@@ -81,42 +56,9 @@ export default function Products() {
 				onChange={handleOnchange}
 			/>
 			<Divider orientation="left" className="first">
-				Information Product
+				Options Product
 			</Divider>
-			<Form.List name="op">
-				{(fields, { add, remove }, { errors }) => (
-					<React.Fragment>
-						{fields.map((field, index) => (
-							<React.Fragment key={index + 1}>
-								<Divider orientation="left" className="first">
-									variant {index + 1}
-								</Divider>
-								<Form.Item
-									wrapperCol={{ span: 4, offset: 2 }}
-									style={{ marginBottom: 0 }}>
-									<Button
-										onClick={() => remove(field.name)}
-										type="primary"
-										danger
-										size="small"
-										icon={<CloseOutlined />}
-									/>
-								</Form.Item>
-								<DynamicFields
-									name="variant"
-									changeName={handleChange}
-									ChangeOptions={handleChange}
-								/>
-							</React.Fragment>
-						))}
-						<Form.Item {...formItemLayoutWithOutLabel}>
-							<Button onClick={() => add()} type="primary" icon={<PlusOutlined />}>
-								Add variant
-							</Button>
-						</Form.Item>
-					</React.Fragment>
-				)}
-			</Form.List>
+			<DynamicFields setValue={setValue} value={value} />
 
 			<InputElement
 				name="price"
@@ -175,10 +117,13 @@ export default function Products() {
 				onChange={handleOnchange}
 			/>
 
-			<h1 style={{ padding: '2rem' }}>Other</h1>
+			<Divider orientation="left" className="first">
+				Other Information
+			</Divider>
 			<SelectElement
 				name="preOrder"
 				label="pre order"
+				labelAlign="left"
 				hasFeedback
 				validateStatus={error['preOrder'] && 'error'}
 				help={error['preOrder']}
@@ -188,6 +133,7 @@ export default function Products() {
 			{value?.preOrder && (
 				<InputElement
 					name="preOrder_time"
+					labelAlign="left"
 					label="day"
 					hasFeedback
 					validateStatus={error['preOrder_time'] && 'error'}
@@ -209,6 +155,7 @@ export default function Products() {
 				name="condition"
 				label="condition"
 				hasFeedback
+				labelAlign="left"
 				validateStatus={error['condition'] && 'error'}
 				setValue={setValue}
 				options={['new', 'seccond']}

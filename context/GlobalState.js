@@ -19,7 +19,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log(value);
+		// console.log(value);
 		// try {
 		// 	const res = await axios({
 		// 		method: 'POST',
