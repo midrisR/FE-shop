@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext } from 'react';
 import LayoutDashboard from '../../components/dashboard';
 import InputElement from '../../components/form/input';
 import ButtonElement from '../../components/form/button';
@@ -6,15 +6,12 @@ import UploadElement from '../../components/form/upload';
 import TextAreaElement from '../../components/form/textarea';
 import { GlobalContext } from '../../context/GlobalState';
 import SelectElement from '../../components/form/select';
-import UploadVariant from '../../components/form/UploadVariant';
 import DynamicFields from '../../components/form/DynamicFields';
-import { Form, Button, Divider } from 'antd';
+import { Form, Divider } from 'antd';
 
 export default function Products() {
 	const { setValue, value, error, handleSubmit } = useContext(GlobalContext);
 	const [form] = Form.useForm();
-
-	const [obj, setObj] = useState([]);
 
 	const handleOnchange = (e) => {
 		const { name, value } = e.target;
@@ -27,11 +24,13 @@ export default function Products() {
 	return (
 		<Form
 			form={form}
-			labelCol={{ span: 2 }}
+			labelCol={{ span: 2, offset: 0 }}
 			wrapperCol={{ span: 10 }}
 			autoComplete="off"
 			onSubmitCapture={handleSubmit}>
-			<h1 style={{ padding: '2rem' }}>Product Information</h1>
+			<Divider orientation="left" className="first">
+				Product Information
+			</Divider>
 			<InputElement
 				name="name"
 				label="name"
@@ -42,6 +41,7 @@ export default function Products() {
 			/>
 			<UploadElement
 				label="image"
+				labelAlign="left"
 				hasFeedback
 				validateStatus={error['image'] && 'error'}
 				help={error['image']}
@@ -49,6 +49,7 @@ export default function Products() {
 			/>
 			<TextAreaElement
 				label="description"
+				labelAlign="left"
 				hasFeedback
 				validateStatus={error['description'] && 'error'}
 				help={error['description']}

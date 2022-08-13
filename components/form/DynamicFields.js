@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Space } from 'antd';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import UploadVariant from './UploadVariant';
-
+import EditTable from '../EditTable';
 const FieldsOptions = ({ options, index, handleChangeOption, removeFieldsOption }) => {
 	return (
 		<>
@@ -58,10 +58,11 @@ const UploadImgae = ({ images, index, handleChangeimage, options }) => {
 	);
 };
 
-export default function DynamicFields({ setValue, value }) {
+export default function DynamicFields({ setValue }) {
 	const [options, setOptions] = useState([]);
 	const [images, setImages] = useState([]);
 	const [variants, setVariants] = useState([]);
+	const [price, setPrice] = useState([]);
 	const [form] = Form.useForm();
 
 	const handleChangeName = (event, index) => {
@@ -78,13 +79,16 @@ export default function DynamicFields({ setValue, value }) {
 	const handleChangeimage = (event, index) => {
 		let data = [...images];
 		data[index]['image'] = event[0].response;
-		console.log(event);
 		setImages(data);
 	};
 
 	const addOptionFields = (index) => {
-		setOptions([...options, { option: '', key: index }]);
-		setImages([...images, { image: '', key: index }]);
+		const type = index > 0 ? 'size' : 'motif';
+		setOptions([...options, { option: '', key: index, type: type }]);
+		setImages([...images, { image: '', key: index, type: type }]);
+		if (index > 0) {
+			setPrice([...price, { price: '' }]);
+		}
 	};
 
 	const addFields = () => {
@@ -109,23 +113,35 @@ export default function DynamicFields({ setValue, value }) {
 	useEffect(() => {
 		const result = variants.map((item) => {
 			const obj = options.filter(({ key }) => key === item.key);
-			return { name: item.variant, value: obj.map((val) => val.option) };
+			const img = images.filter(({ key }) => key === item.key);
+			return {
+				name: item.variant,
+				options: obj.map((val) => val.option),
+				images: img.map((val) => val.image),
+			};
 		});
 		setValue((prev) => ({
 			...prev,
 			variant: result,
 		}));
-	}, [options, variants]);
-	console.log(images);
+	}, [options, variants, images]);
+	console.log(price);
 	return (
 		<>
+			<Form.Item wrapperCol={{ offset: 2, span: 12 }}>
+				{variants.length < 2 && (
+					<Button type="dashed" icon={<PlusOutlined />} onClick={addFields}>
+						add variant
+					</Button>
+				)}
+			</Form.Item>
 			{variants.map((variant, u) => (
 				<React.Fragment key={u}>
 					<Form.Item labelAlign="left" label={`Variant ${u + 1}`}>
 						<Input.Group compact>
 							<Input
 								name="variant"
-								placeholder="example: color / size"
+								placeholder={u === 0 ? 'example: color' : 'example: size'}
 								style={{
 									width: u > 0 ? 'calc(86%)' : '100%',
 									marginRight: '0.5rem',
@@ -164,13 +180,6 @@ export default function DynamicFields({ setValue, value }) {
 					</Form.Item>
 				</React.Fragment>
 			))}
-			{variants.length < 2 && (
-				<Form.Item wrapperCol={{ offset: 2 }}>
-					<Button type="dashed" icon={<PlusOutlined />} onClick={addFields}>
-						add variant
-					</Button>
-				</Form.Item>
-			)}
 		</>
 	);
 }
